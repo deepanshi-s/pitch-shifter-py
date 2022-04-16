@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from .utilities import *
+from utilities import *
 import numpy as np
 
 class PhaseVocoder(object):

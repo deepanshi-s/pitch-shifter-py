@@ -5,6 +5,6 @@
 # from .vocoder import *
 # from .resampler import *
 import logging
-from .version import *
+from version import *
 
 log = logging.getLogger("pitchshifter")
