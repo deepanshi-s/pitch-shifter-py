@@ -39,6 +39,10 @@ def pitchShifter(wavFile, pitch, out, startTime = 0, endTime= -1, overlap = .9, 
         sys.exit(-1)
     time = source[1].shape[0] / source[0]
     
+    print(startTime, endTime, time)
+    print(type(startTime), type(time))
+    startTime *= time/100
+    endTime *= time/100
     
     print(source[1].shape, time)
     
