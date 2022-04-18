@@ -28,6 +28,9 @@ def stft(x, chunk_size, hop, w=None):
             raise ValueError("window w is not of the correct length {0}.".format(chunk_size))
     X = array([fft(w*x[i:i+chunk_size])
                      for i in range(0, len(x)-chunk_size, hop)])/np.sqrt(((float(chunk_size)/float(hop))/2.0))
+    
+    
+    print('stft', X.shape)
     return X
 
 def istft(X, chunk_size, hop, w=None):

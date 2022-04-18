@@ -20,16 +20,28 @@ import scipy.interpolate
 import scipy.io.wavfile
 import sys
 import logging
-
+import math
 from stft import *
 from vocoder import *
 from utilities import *
 from resampler import linear_resample
+import librosa.display
+import librosa
+import matplotlib.pyplot as plt
+import os 
 
 logging.basicConfig(filename='pitchshifter-cli.log', filemode='w', level=logging.DEBUG)
 
+parentDir = 'C:/Users/Admin/Documents/grad_school/sem2/dsp-speech/project/pitch-shifter-py/plots'
 
-def pitchShifter(wavFile, pitch, out, startTime = 0, endTime= -1, overlap = .9, chunk_size = 4096, blend = 1):
+def saveSpectrum(X, path):
+    powerSpectrum, frequencies, time, imageAxis = plt.specgram(X, Fs = 8000)
+    plt.xlabel('Time')
+    plt.ylabel('Frequency')
+    plt.savefig(path)
+    plt.cla()
+
+def pitchShifter(wavFile, pitch, out, name, startTime = 0, endTime= -1, overlap = .9, chunk_size = 4096, blend = 1):
     # Try to open the wav file and read it
     try:
         source = scipy.io.wavfile.read(wavFile)
@@ -61,7 +73,7 @@ def pitchShifter(wavFile, pitch, out, startTime = 0, endTime= -1, overlap = .9, 
     
     
         
-    
+    #RESAMPLING_FACTOR = 12*math.log(pitch, 2)
     RESAMPLING_FACTOR = 2**(pitch/12)
     HOP = int((1-overlap)*chunk_size)
     HOP_OUT = int(HOP*RESAMPLING_FACTOR)
@@ -78,7 +90,7 @@ def pitchShifter(wavFile, pitch, out, startTime = 0, endTime= -1, overlap = .9, 
     adjusted = [frame for frame in vocoder.sendFrames(frames)]
 
     merged_together = istft(adjusted, chunk_size, HOP_OUT)
-
+    
     
     resampled = linear_resample(merged_together, 
                                    len(signal))
@@ -93,7 +105,7 @@ def pitchShifter(wavFile, pitch, out, startTime = 0, endTime= -1, overlap = .9, 
     else:
         finalSig = final
     
-    print(finalSig.shape)
+    print('final shape', finalSig.shape)
     
     
     output = scipy.io.wavfile.write(out, rate, np.asarray(finalSig, dtype=np.int16))
